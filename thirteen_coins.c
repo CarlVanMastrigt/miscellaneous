@@ -58,5 +58,5 @@ void thirteen_coins(int * w)//weights
 
     char* delta_descriptions[3]={"it was lighter","I'm unsure whether it was heavier or lighter","it was heavier"};
 
-    printf("coin %d was counterfit and %s\n",c+1,delta_descriptions[d+1]);
+    printf("coin %d was counterfeit and %s\n",c+1,delta_descriptions[d+1]);
 }
