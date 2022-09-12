@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-/// note: teats coin at index 0 as "coin 1" (i.e. coin names are 1 indexed not 0 indexed)
+/// note: treats coin at index 0 as "coin 1" (i.e. coin names are 1 indexed not 0 indexed)
 void thirteen_coins(int * w)//weights
 {
     int r1,r2,r3;///results of different weighings
