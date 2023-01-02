@@ -67,18 +67,39 @@ static inline int32_t test_div_3(int32_t n,int32_t d)
 
 ///all above variants (unacceptably) generate multipliers greater than 2^31
 /// pretty confident this one is it, just works
+static inline int32_t test_div_4(int32_t n,int32_t d)
+{
+    ///will produce undefined behaviour when (d==1 or d==-1) and n==INT_MIN , these cases COULD be handled by returning n or n*d in those cases, but i don't see such support as worth the performance hit
+    /// ESPECIALLY when INT_MIN/-1 is an invalid op anyway! (so really only real op is unsupported)
+    int32_t sh,sm,de;
+    int64_t ad=labs((int64_t)d);
+    sh=cvm_po2_lt(ad);
+    int64_t m=((((int64_t)1)<<(sh|0x20))/ad)-(((int64_t)1)<<32)+1;///subtract 2^32 (then add n later before right shifting 32) to ensure multiplier stays withing s32 range
+//    if((m<-2147483648)||(m>2147483647))printf("%lld %d %d %lld\n",m,s,d,ad);
+//    assert(m>=-2147483648);
+//    assert(m<= 2147483647);
+    sm=d>>31;///divisor sign mask (all bits)
+    de=(((uint32_t)n)>>31) - (sm&1);
+    m*=n;
+//    int64_t tt=(m>>32)+n;
+//    if((tt<-2147483648)||(tt>2147483646))printf("%lld %lld %d %d\n",m,tt,d,sh);
+//    assert(tt>=-2147483648);
+//    assert(tt<= 2147483647);
+    return ((((m>>32)+n)>>sh)+de)^sm;///xor and sub replaces multiplication of sign
+    ///sign bit can be handled w/o multiplication, abuse 2's compliment (sub 1 and swap top bit if result needs to be negated)
+}
+
 static inline int32_t test_div(int32_t n,int32_t d)
 {
-    int32_t s,sm,c;
+    ///will produce undefined behaviour when (d==1 or d==-1) and n==INT_MIN , these cases COULD be handled by returning n or n*d in those cases, but i don't see such support as worth the performance hit
+    /// ESPECIALLY when INT_MIN/-1 is an invalid op anyway! (so really only real op is unsupported)
+    int32_t sh,sm,de;
     int64_t ad=labs((int64_t)d);
-    s=cvm_po2_lt(ad);
-    int64_t m=((((int64_t)1)<<(s|0x20))/ad)-(((int64_t)1)<<32)+1;///subtract 2^32 (then add n later before right shifting 32) to ensure multiplier stays withing s32 range
-    if((m<-2147483648)||(m>2147483647))printf("%lld %d %d %lld\n",m,s,d,ad);
-    assert(m>-2147483648);
-    assert(m< 2147483647);
+    sh=cvm_po2_lt(ad);
+    int64_t m=((((int64_t)1)<<(sh|0x20))/ad)-(((int64_t)1)<<32)+1;///subtract 2^32 (then add n later before right shifting 32) to ensure multiplier stays withing s32 range
     sm=d>>31;///divisor sign mask (all bits)
-    c=(((uint32_t)n)>>31) - (sm&1);
+    de=(((uint32_t)n)>>31) - (sm&1);
     m*=n;
-    return ((((m>>32)+n)>>s)+c)^sm;///xor and sub replaces multiplication of sign
+    return ((((m>>32)+n)>>sh)+de)^sm;///xor and sub replaces multiplication of sign
     ///sign bit can be handled w/o multiplication, abuse 2's compliment (sub 1 and swap top bit if result needs to be negated)
 }
