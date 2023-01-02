@@ -29,34 +29,78 @@ void thirteen_coins(int * w)//weights
     }
     else
     {
-        r2=(w[5]+w[6]+w[7] + w[9]+w[10]) - (w[0]+w[1]+w[2]+w[3]+w[4]);///compare subset against "control" coins
+        r2=(w[5]+w[6] + w[9]) - (w[7]+w[8]+w[0]);///compare shuffled subset against a "control" coin
 
-        if(r2==0)///not among coins in r2; 8,11,12
+        if(r2==0)///remanats 10,11,12
         {
-            r3=w[11]-w[12];
-
-            if(r3==0) d=r1,c=8;
-            else if(r3==r1)d=-r1,c=12;
-            else d=-r1,c=11;
+            r3=w[10] - w[11];
+            if(r3==0)d=-r1,c=12;
+            else if(r3==r1)d=-r3,c=11;
+            else d=r3,c=10;
         }
-        else if(r2==r1)///result the same; 5,6,7
+        else if(r2==r1)/// same 5 6
         {
-            r3=w[5]-w[6];
-
-            if(r3==0)d=r1,c=7;
-            else if(r3==r1)d=r1,c=5;
-            else d=r1,c=6;
+            r3=w[5] - w[6];
+            if(r3==r2)d=r3,c=5;
+            else d=-r3,c=6;
         }
-        else /// result swapped; 9,10
+        else/// swapped 7 8 9
         {
-            r3=w[9]-w[10];
-            if(r3==r1)d=-r1,c=10;
-            else if(r3)d=-r1,c=9;
-            else d=0,c=-1;
+            r3=w[7] - w[8];
+            if(r3==0)d=r2,c=9;
+            else if(r3==r2)d=-r3,c=8;
+            else d=r3,c=7;
         }
     }
 
     char* delta_descriptions[3]={"it was lighter","I'm unsure whether it was heavier or lighter","it was heavier"};
 
-    printf("coin %d was counterfeit and %s\n",c+1,delta_descriptions[d+1]);
+    printf("coin %d was counterfeit and %s\n",c+1,delta_descriptions[(d>=0) + (d>0)]);
+    /**
+    with control coin 9
+    0 1 2 3 4 - 5 6 7 8 9
+
+    0 1 5 - 2 3 6
+    same 0 1 6
+    diff 5 2 3
+    == 4 7 8
+
+    no real use for this as won't have control coin w/o having additional information about this (unless this 9 is in an == branch)
+
+    26 -
+    r0 = 0 1 2 3 4 5 6 7 8 9 a b c - 10 11 12 13 14 15 16 17 18 19 d e f
+
+        r1 = 0 1 2 3 14 15 16 17 8 - 4 5 6 7 10 11 12 13 9
+        same 0 1 2 3 10 11 12 13 8 ///ideally want 9 unknown??
+            r2 = 0 1 11 - 10 2 3
+            same 0 1 10
+            diff 11 2 3
+            == 12 13 8
+        diff 4 5 6 7 14 15 16 17 9
+            r2 = 4 5 14 - 6 7 15
+            same 6 7 14
+            diff 4 5 15
+            == 16 17 9
+        ==   18 19 a b c d e f
+            r2 = 18 19 a - d e b
+            same a d e
+            diff 18 19 b
+            == c f
+    ==
+    0 1 2 3 4 5 6 7 8, 9 10 11 12 13
+        r1 = 0 1 2 3 4 - 5 6 7 8 c
+        == 9 10 11 12 13
+            r2 9 10 - 11 c
+            == 12 13
+            else 9 10 11
+                9 - 10
+        else 0 1 2 3 4 5 6 7 8
+            r2 = 0 1 5 - 2 3 6
+            same 0 1 6
+            diff 2 3 5
+            == 4 7 8
+                7 - 8
+
+            can only resolve 40
+    */
 }

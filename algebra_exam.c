@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
 /// for Eric :D
 
@@ -23,7 +24,7 @@ void simultaneous_equations_level_1_question(int question_index)
 
 }
 
-int simultaneous_equations_level_1_answer(int question_index)
+int simultaneous_equations_level_1_answer(int question_index,int print_result)
 {
     /// v0y+v1x+v2=0, v3y+v4x+v5=0
     srand(question_index);
@@ -83,16 +84,21 @@ int simultaneous_equations_level_1_answer(int question_index)
 
     if(fabsf(r1)<0.000000001 && fabsf(r2)<0.000000001)
     {
-        if(!xn)puts("x = 0");
-        else if(xd==1)printf("x = %d\n",xn);
-        else printf("x = %d/%d\n",xn,xd);
-        if(!yn)puts("y = 0");
-        else if(yd==1)printf("y = %d\n",yn);
-        else printf("y = %d/%d\n",yn,yd);
+        if(print_result)
+        {
+            if(!xn)puts("x = 0");
+            else if(xd==1)printf("x = %d\n",xn);
+            else printf("x = %d/%d\n",xn,xd);
+            if(!yn)puts("y = 0");
+            else if(yd==1)printf("y = %d\n",yn);
+            else printf("y = %d/%d\n",yn,yd);
+        }
+        return 1;
     }
     else if(xd==0)
     {
-        puts("Psych! there is no solution! I got you! :D");
+        if(print_result)puts("Psych! there is no solution! I got you! :D");
+        return 0;
     }
     else
     {
@@ -101,5 +107,6 @@ int simultaneous_equations_level_1_answer(int question_index)
            v[3],v[4]<0?"-":"+",abs(v[4]),v[5]<0?"-":"+",abs(v[5]));
         printf("%f %f, %d/%d, %d/%d, %f %f\n",x,y,xn,xd,yn,yd, r1,r2);
         puts("oh fuck, oh fuck, I couldn't figure it out! please report the above lines!");
+        return 0;
     }
 }
