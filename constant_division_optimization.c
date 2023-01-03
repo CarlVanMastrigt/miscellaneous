@@ -98,7 +98,7 @@ static inline int32_t test_div(int32_t n,int32_t d)
     sh=cvm_po2_lt(ad);
     int64_t m=((((int64_t)1)<<(sh|0x20))/ad)-(((int64_t)1)<<32)+1;///subtract 2^32 (then add n later before right shifting 32) to ensure multiplier stays withing s32 range
     sm=d>>31;///divisor sign mask (all bits)
-    de=(((uint32_t)n)>>31) - (sm&1);
+    de=(((uint32_t)n)>>31) + sm;//sm is just -1 when sign bit is 1 and 0 otherwise (and we want to subtract 1 here when sign is negative)
     m*=n;
     return ((((m>>32)+n)>>sh)+de)^sm;///xor and sub replaces multiplication of sign
     ///sign bit can be handled w/o multiplication, abuse 2's compliment (sub 1 and swap top bit if result needs to be negated)
