@@ -115,14 +115,14 @@ static inline int32_t test_mod_4(int32_t n,int32_t d)
     m*=d;
 
     //m^=smn;
-    m=((m>>0x20)^smn)-smn;
-
-//    return (m>>0x20)*smn;
+    return ((m>>0x20)^smn)-smn;
 }
 
 static inline int32_t test_mod(int32_t n,int32_t d)
 {
 	///there's almost certainly a way to optimise this further...
+	/// is still suboptimal compared to div-mul-sub
+	///also fails when n == INT_MIN
     int32_t sh,smd,de,smn;
     uint64_t ad=labs((int64_t)d);
     sh=cvm_po2_gte(ad);
@@ -141,5 +141,5 @@ static inline int32_t test_mod(int32_t n,int32_t d)
     m>>=sh;
     m*=d;
 
-    m=((m>>0x20)^smn^smd)-smn;
+    return ((m>>0x20)^smn^smd)-smn;
 }
